@@ -1,0 +1,14 @@
+#Auxiliary
+.gradle
+stories.txt
+.settings
+.classpath
+.project
+bin
+
+#Erlang
+.eunit
+deps
+*.o
+*.beam
+*.plt
