@@ -1,12 +1,16 @@
-#Auxiliary
-.gradle
+#private
 stories.txt
+
+#auxiliary
+.gradle
+
+#eclipse
+build
 .settings
 .classpath
 .project
-bin
 
-#Erlang
+#erlang
 .eunit
 deps
 *.o
