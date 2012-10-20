@@ -1,18 +1,6 @@
-apply plugin: 'groovy'
 apply plugin: 'eclipse'
 
 repositories { mavenCentral() }
-
-dependencies {
-	groovy group: 'org.codehaus.groovy', name: 'groovy-all', version: '1.8.6'
-}
-
-sourceSets {
-	main {
-		resources { srcDir "src/main/erlang" }
-		resources { srcDir "src/main/scripts" }
-	}
-}
 
 eclipse {
 	classpath {
@@ -20,12 +8,15 @@ eclipse {
 	}
 }
 
-task compileErlang(dependsOn:processResources) << {
-	executeSystemCommand(['erlc', '-Wall', '-v', '-o', 'build/resources/main/', 'src/main/erlang/rest.erl'])
+task clean << {
+	['rm', '-f', 'ebin/*.beam'].execute()
 }
 
-classes.dependsOn(compileErlang)
+task compile(dependsOn:clean) << {
+	executeSystemCommand(['erlc', '-Wall', '-v', '-o', 'ebin', 'src/rest.erl'])
+}
 
+task build(dependsOn:compile)
 
 def executeSystemCommand(command) {
 	log("executing ${command}")

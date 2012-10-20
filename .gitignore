@@ -3,9 +3,10 @@ stories.txt
 
 #auxiliary
 .gradle
+build
+bin
 
 #eclipse
-build
 .settings
 .classpath
 .project
