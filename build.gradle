@@ -12,7 +12,7 @@ eclipse {
 
 task (clean) << {
 	['rm', '-f', 'ebin/*.beam'].execute()
-	['rm', '-Rf', 'build/*'].execute()
+	['rm', '-Rf', '${project.buildDir}/*'].execute()
 }
 
 task (compile, dependsOn:clean) << {
@@ -23,11 +23,7 @@ task (compile, dependsOn:clean) << {
 	}
 }
 
-task (generateResources) << {
-	new File("build/release_ads3dss.rel").write("""{release,{"Alpha1","${project.version}"},{erts,"5.9.2"},[{kernel,"2.15.2"},{stdlib,"1.18.2"},{sasl,"2.2.1"},{ads3dss,"${project.version}"}]}.""")
-}
-
-task (build, type:Copy, dependsOn:[compile,generateResources]) {
+task (build, type:Copy, dependsOn:[compile]) {
 	from(projectDir) {
 		include 'README'
 		include 'src/**/*'
@@ -36,10 +32,9 @@ task (build, type:Copy, dependsOn:[compile,generateResources]) {
 		include 'scripts/**/*'
 	}
 	
-	into "build/ads3dss-${project.version}"
+	into "${project.buildDir}/ads3dss-${project.version}"
 	exclude '**/*.bak'
 	includeEmptyDirs = true
-	
 }
 
 def executeSystemCommand(command) {
@@ -58,17 +53,29 @@ def log(message) {
 	println " -${message}"
 }
 
+
+task (generateResources) << {
+	new File("${project.buildDir}/release_ads3dss.rel").write("""{release,{"Alpha1","${project.version}"},{erts,"5.9.2"},[{kernel,"2.15.2"},{stdlib,"1.18.2"},{sasl,"2.2.1"},{ads3dss,"${project.version}"}]}.""")
+}
+
+task(generateRelease, type:Exec, dependsOn:generateResources) {
+	workingDir=project.buildDir
+	commandLine=['erl','-pa', "ads3dss-${project.version}/ebin/", '-run', 'target_system', 'create', 'release_ads3dss']
+	doLast {
+		assert false:"Not working correctly - do the procedure manually"
+			println "=====>"+execResult.exitValue+"==="+errorOutput.text+"==="+standardOutput.text
+	}
+}
 //cd build
-//cp ../*.rel .
 //mkdir target
 //erl -pa ads3dss-1.0/ebin/
 //target_system:create("release_ads3dss").
 //target_system:install("release_ads3dss", "./target").
 //$./erts-5.9.2/bin/erl.exe -noshell -boot releases/1.0/start.boot &
 
-
 //[erlang]
 //Bindir=C:\\dev\\ws\\3dss\\build\\target\\erts-5.9.2\\bin
 //Progname=erl
 //Rootdir=C:\\dev\\ws\\3dss\\build\\target
 
+//pushd . && cd priv/ && nohup `erl -pa ../ebin/ -config app -s inets -noshell -noinput` &
