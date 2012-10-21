@@ -3,11 +3,11 @@ function reloadStatistics() {
 //	$.getJSON('services/rest/login', function(data) {});
 	
 	$.ajax({
-		url: "services/rest/login",
+		url: "services/statistics_request_handler/login",
 		dataType: 'text',
 //		data: data,
 		success: function(data) {
-			$("#sessionStatistics").html(data+(counter++));
+			$("#sessionStatistics").html(data+", number of request: "+(counter++));
 		}
 	});
 }
