@@ -5,6 +5,7 @@ stories.txt
 .gradle
 build
 bin
+priv/log/*.log
 
 #eclipse
 .settings
