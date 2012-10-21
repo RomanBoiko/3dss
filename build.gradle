@@ -1,5 +1,7 @@
 apply plugin: 'eclipse'
 
+version "1.0"
+
 repositories { mavenCentral() }
 
 eclipse {
@@ -8,26 +10,65 @@ eclipse {
 	}
 }
 
-task clean << {
+task (clean) << {
 	['rm', '-f', 'ebin/*.beam'].execute()
+	['rm', '-Rf', 'build/*'].execute()
 }
 
-task compile(dependsOn:clean) << {
-	executeSystemCommand(['erlc', '-Wall', '-v', '-o', 'ebin', 'src/rest.erl'])
+task (compile, dependsOn:clean) << {
+	new File("src").eachFile{ file->
+		if (file.isFile()) {
+			executeSystemCommand(['erlc', '-Wall', '-v', '-o', 'ebin', file.path])
+		}
+	}
 }
 
-task build(dependsOn:compile)
+task (generateResources) << {
+	new File("build/release_ads3dss.rel").write("""{release,{"Alpha1","${project.version}"},{erts,"5.9.2"},[{kernel,"2.15.2"},{stdlib,"1.18.2"},{sasl,"2.2.1"},{ads3dss,"${project.version}"}]}.""")
+}
+
+task (build, type:Copy, dependsOn:[compile,generateResources]) {
+	from(projectDir) {
+		include 'README'
+		include 'src/**/*'
+		include 'ebin/**/*'
+		include 'priv/**/*'
+		include 'scripts/**/*'
+	}
+	
+	into "build/ads3dss-${project.version}"
+	exclude '**/*.bak'
+	includeEmptyDirs = true
+	
+}
 
 def executeSystemCommand(command) {
 	log("executing ${command}")
 	def proc = command.execute()
 	proc.waitFor()
-	log("return code: ${proc.exitValue()}")
-	log("stderr: ${proc.err.text}")
-	log("stdout: ${proc.in.text}")
-	assert proc.exitValue()==0: "system command failed"
+	if(proc.exitValue()!=0) {
+		log("return code: ${proc.exitValue()}")
+		log("stderr: ${proc.err.text}")
+		log("stdout: ${proc.in.text}")
+		assert false: "system command failed"
+	}
 }
 
 def log(message) {
 	println " -${message}"
 }
+
+//cd build
+//cp ../*.rel .
+//mkdir target
+//erl -pa ads3dss-1.0/ebin/
+//target_system:create("release_ads3dss").
+//target_system:install("release_ads3dss", "./target").
+//$./erts-5.9.2/bin/erl.exe -noshell -boot releases/1.0/start.boot &
+
+
+//[erlang]
+//Bindir=C:\\dev\\ws\\3dss\\build\\target\\erts-5.9.2\\bin
+//Progname=erl
+//Rootdir=C:\\dev\\ws\\3dss\\build\\target
+
