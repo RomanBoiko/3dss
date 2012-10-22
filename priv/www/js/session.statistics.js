@@ -3,7 +3,7 @@ function reloadStatistics() {
 //	$.getJSON('services/rest/login', function(data) {});
 	
 	$.ajax({
-		url: "services/statistics_request_handler/login",
+		url: "services/statistics_request_handler/session_statistics",
 		dataType: 'text',
 //		data: data,
 		success: function(data) {

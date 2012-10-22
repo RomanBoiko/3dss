@@ -1,5 +1,5 @@
 -module(statistics_request_handler).
--export([login/3]).
+-export([session_statistics/3]).
 
-login(SessionID, _Env, _Input) ->
+session_statistics(SessionID, _Env, _Input) ->
     mod_esi:deliver(SessionID,["[server] Statistics is not available yet"]).

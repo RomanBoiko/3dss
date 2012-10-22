@@ -1,1 +1,1 @@
-pushd . && cd priv/ && nohup `erl -pa ../ebin/ -config app -s inets -noshell -noinput` &
+gradle build && pushd . && cd priv/ && nohup `erl -pa ../ebin/ -config app -s inets -noshell -noinput >>log/server.out.log 2>&1` &
