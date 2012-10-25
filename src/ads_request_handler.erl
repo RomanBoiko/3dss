@@ -1,8 +1,13 @@
 -module(ads_request_handler).
 -export([register_client/3]).
 
+-include("../include/entities.hrl").
+
 register_client(SessionID, Env, Input) ->
     io:format(">>register_client: sessionId=~w, input=~s, env=~w ~n", [SessionID, http_uri:decode(Input), Env]),
+    User_http_request_details = #http_request_details{request_method="POST", _="_"},
+    UserSessionId = db:create_user_session(http_uri:decode(Input), User_http_request_details),
+    io:format(">>>SESSION=~w~n", [db:get_user_session(UserSessionId)]),
     print_http_options(Env),
     mod_esi:deliver(SessionID,["ok"]).
 

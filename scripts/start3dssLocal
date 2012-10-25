@@ -1,1 +1,4 @@
-gradle build && pushd . && cd priv/ && nohup `erl -pa ../ebin/ -config app -s inets -noshell -noinput >>log/server.out.log 2>&1` &
+gradle build && pushd . && cd priv/
+nohup `erl -pa ../ebin/ -config app -s inets -mnesia dir '"./db"' -s db -noshell -noinput >>log/server.out.log 2>&1` &
+#-mnesia dir '"./db"' -s db
+tail -f log/server.out.log log/error.log

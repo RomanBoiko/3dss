@@ -1,0 +1,3 @@
+-record(unique, {type, id}).
+-record(user_session, {id, ad_id, user_http_request_details}).
+-record(http_request_details, {request_method,remote_addr,http_connection,http_content_length,http_cache_control,http_origin,http_x_requested_with,http_user_agent,http_content_type,http_accept,http_referer,http_accept_encoding,http_accept_language,http_accept_charset,content_length}).
